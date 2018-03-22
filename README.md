@@ -9,3 +9,5 @@ This a custom IDE built on top of Eclipse. This makes using the Spring Framework
 Do a maven clean install when you first get the project to install all the dependencies. 
 
 The back-end is built as a REST-api which serves data from the database. 
+
+The front-end project files are located at: https://github.com/artvegas/datingApp-front-end
