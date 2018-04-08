@@ -1,6 +1,7 @@
 package com.api.datingApp.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +13,7 @@ import com.api.datingApp.model.Account;
 import com.api.datingApp.model.ServerResponse;
 import com.api.datingApp.repo.AccountRepo;
 
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 @RestController
 @RequestMapping(value="/accounts")
 public class AccountController {

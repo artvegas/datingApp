@@ -15,6 +15,8 @@ public class Person {
 	private String firstName;
 	@Column(name = "LastName")
 	private String lastName;
+	@Column(name = "Street")
+	private String street;
 	@Column(name = "City")
 	private String city;
 	@Column(name = "State")
@@ -30,13 +32,14 @@ public class Person {
 		
 	}
 	
-	public Person(String ssn, String password, String firstName, String lastName, String city, String state,
+	public Person(String ssn, String password, String firstName, String lastName, String street, String city, String state,
 			int zipcode, String email, String telephone) {
 		super();
 		this.ssn = ssn;
 		this.password = password;
 		this.firstName = firstName;
 		this.lastName = lastName;
+		this.street = street;
 		this.city = city;
 		this.state = state;
 		this.zipcode = zipcode;
@@ -44,6 +47,14 @@ public class Person {
 		this.telephone = telephone;
 	}
 	
+	public String getStreet() {
+		return street;
+	}
+
+	public void setStreet(String street) {
+		this.street = street;
+	}
+
 	public String getSsn() {
 		return ssn;
 	}
