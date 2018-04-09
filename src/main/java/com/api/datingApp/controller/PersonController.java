@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.api.datingApp.model.Person;
 import com.api.datingApp.model.ServerResponse;
+import com.api.datingApp.model.User;
 import com.api.datingApp.repo.PersonRepo;
+import com.api.datingApp.repo.UserRepo;
 import com.api.datingApp.secruity.PasswordAuthentication;
 
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
@@ -20,6 +22,9 @@ import com.api.datingApp.secruity.PasswordAuthentication;
 public class PersonController {
 	@Autowired
 	private PersonRepo personRepo;
+	
+	@Autowired
+	private UserRepo userRepo;
 	
 	@GetMapping(value="/all")
 	@ResponseBody 
@@ -44,7 +49,15 @@ public class PersonController {
 		char[] password = person.getPassword().toCharArray();
 		person.setPassword(passwordAuth.hash(password));
 		
+		User user = new User();
+		user.setSsn(person.getSsn());
+		user.setPerson(person);
+		user.setDateOfLastAct(null);
+		user.setRating(-1);
+		user.setPPP("User-user");
+		
 		personRepo.save(person);
+		userRepo.save(user);
 		return new ServerResponse(200, "OK");
 	}
 	

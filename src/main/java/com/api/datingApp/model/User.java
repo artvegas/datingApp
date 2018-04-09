@@ -27,13 +27,16 @@ public class User{
 		
 	}
 	
-	public User(Person person, String pPP, int rating, Date dateOfLastAct) {
+	public User(String ssn, Person person, String pPP, int rating, Date dateOfLastAct) {
 		super();
+		this.ssn = ssn;
 		this.person = person;
 		PPP = pPP;
 		this.rating = rating;
 		this.dateOfLastAct = dateOfLastAct;
 	}
+
+
 
 	public Person getPerson() {
 		return person;
