@@ -30,11 +30,12 @@ public class PersonController {
 	@PostMapping(value="/add")
 	@ResponseBody
 	public ServerResponse addNewPerson(@RequestBody Person person) {
-		if(personRepo.findById(person.getSsn()) != null) {
+		
+		if(!personRepo.findBySsn(person.getSsn()).isEmpty()) {
 			return new ServerResponse(210, "User With SSN Already Exsists");
 		}else {
-			if(personRepo.findById(person.getEmail()) != null) {
-				return new ServerResponse(210, "User With SSN Already Exsists");
+			if(!personRepo.findByEmail(person.getEmail()).isEmpty()) {
+				return new ServerResponse(210, "User With Email Already Exsists");
 			}
 		}
 		
