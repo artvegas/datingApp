@@ -26,6 +26,7 @@ public class UserController {
         return userRepo.findAll();
     }
 	
+	
 	@PostMapping(value="/add")
 	@ResponseBody
 	public ServerResponse addNewUser(@RequestBody User user) {
@@ -34,3 +35,5 @@ public class UserController {
 		return new ServerResponse(200, "OK");
 	}
 }
+
+

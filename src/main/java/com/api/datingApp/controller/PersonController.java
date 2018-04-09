@@ -33,6 +33,18 @@ public class PersonController {
     }
 	
 	
+	@GetMapping(value="/")
+	@ResponseBody
+	public ServerResponse getPerson(@RequestBody String email) {
+		Person person = personRepo.findByEmail(email).get(0);
+		if(person == null) {
+			return new ServerResponse(212, "User With Email Does Not Exist.");
+		}
+		
+		return new ServerResponse(200, "OK", person);
+	}
+	
+	
 	@PostMapping(value="/add")
 	@ResponseBody
 	public ServerResponse addNewPerson(@RequestBody Person person) {
