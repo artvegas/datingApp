@@ -11,7 +11,7 @@ public class Account {
 	
 	@EmbeddedId AccountId account;
 	@ManyToOne
-	@JoinColumn(name="OwnerSSN", referencedColumnName="SSN")
+	@JoinColumn(name="ownerSSN", referencedColumnName="SSN")
 	private User user;
 
 	public Account() {
