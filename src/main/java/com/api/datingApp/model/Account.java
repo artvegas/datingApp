@@ -42,4 +42,15 @@ public class Account {
 		this.user = user;
 	}
 	
+	public static String generateId(String ssn, String cardNumber, String acctName) {
+		String id = "";
+		int num = 0;
+		for(int i = 0; i < cardNumber.length(); i++) {
+			num += (cardNumber.charAt(i) * acctName.charAt(i % acctName.length()) 
+					* ssn.charAt(i % ssn.length()));
+		}
+		
+		id = Integer.toString(num);
+		return id;
+	}
 }

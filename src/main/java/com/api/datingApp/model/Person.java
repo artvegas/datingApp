@@ -117,5 +117,20 @@ public class Person {
 				+ telephone + "]";
 	}
 	
+	public static String formatSSN(String ssn) {
+		if(ssn.length() != 9) {
+			return "";
+		}else {
+			String formattedSSN = "";
+			for(int i = 0; i < 9; i++) {
+				if( i == 4 || i == 7) {
+					formattedSSN += '-';
+				}else {
+					formattedSSN += ssn.charAt(i);
+				}
+			}
+			return formattedSSN;
+		}
+	}
 	
 }

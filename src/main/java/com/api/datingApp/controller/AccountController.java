@@ -1,8 +1,13 @@
 package com.api.datingApp.controller;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,29 +30,44 @@ public class AccountController {
 	
 	@GetMapping(value="/all")
 	@ResponseBody
-	public Iterable<Account> getAll(){
-		return accountRepo.findAll();
-	}
-	
-	@GetMapping(value="/")
-	@ResponseBody
-	public ServerResponse getPerson(@RequestBody String ssn) {
-		User user = new User();
-		user.setSsn(ssn);
-		Account account = accountRepo.findByUser(user).get(0);
-		if(account == null) {
-			return new ServerResponse(212, "User With Ssn Does Not Exist.");
+	public ServerResponse<Account> getAll(){
+		try {
+			List<Account> accounts = accountRepo.findAll();
+			return new ServerResponse<Account>(200, "OK",accounts);
+		}catch(Exception e) {
+			return new ServerResponse<Account>(500, e.getMessage());
 		}
 		
-		return new ServerResponse(200, "OK", account);
+	}
+	
+	@GetMapping(value="/{ssn}")
+	@ResponseBody
+	public ServerResponse<Account> getAccounts(@PathVariable("ssn") String ssn) {
+		User user = new User();
+		user.setSsn(ssn);
+		List<Account> accounts = accountRepo.findByUser(user);
+		if(accounts.isEmpty()) {
+			return new ServerResponse<Account>(212, "User With Ssn Does Not Exist.");
+		}
+		
+		return new ServerResponse<Account>(200, "OK", accounts);
 	}
 	
 	
 	@PostMapping(value="/add")
 	@ResponseBody
-	public ServerResponse addNewAccount(@RequestBody Account account) {
+	public ServerResponse<Account> addNewAccount(@RequestBody Account account) {
+//		try {
+//			accountRepo.save(account);
+//			return new ServerResponse<Account>(200, "OK", account);
+//		}catch(Exception e){
+//			return new ServerResponse<Account>(500, e.getMessage());
+//		}
+		Date date = new Date(Calendar.getInstance().getTime().getTime());
+		account.getAccount().setAcctCreationDate(date);
+		account.getAccount().setAcctNum(Account.generateId(account.getUser().getSsn(), account.getAccount().getCardNumber(), account.getAccount().getAcctName()));
 		accountRepo.save(account);
-		return new ServerResponse(200, "OK");
+		return new ServerResponse<Account>(200, "OK");
 	}
 
 }

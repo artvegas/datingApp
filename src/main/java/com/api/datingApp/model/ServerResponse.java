@@ -1,17 +1,36 @@
 package com.api.datingApp.model;
 
-public class ServerResponse {
+import java.util.List;
+
+public class ServerResponse<T> {
 	private int statusCode;
 	private String status;
-	private Object object;
+	private List<T> object;
 	
-	public ServerResponse(int statusCode, String status, Object object) {
+	
+	
+	public ServerResponse(int statusCode, String status, List<T> object) {
 		super();
 		this.statusCode = statusCode;
 		this.status = status;
 		this.object = object;
 	}
 	
+	public ServerResponse(int statusCode, String status, T object) {
+		super();
+		this.statusCode = statusCode;
+		this.status = status;
+		this.object.add(object);
+		
+	}
+	
+	public List<T> getObject() {
+		return object;
+	}
+	
+	public void setObject(List<T> object) {
+		this.object = object;
+	}
 	public ServerResponse(int statusCode, String status) {
 		super();
 		this.statusCode = statusCode;
