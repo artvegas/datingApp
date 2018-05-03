@@ -22,13 +22,13 @@ public class Employee{
 	@Column(name = "StartDate")
 	private Date startDate;
 	@Column(name = "HourlyRate")
-	private long hourlyRate;
+	private double hourlyRate;
 	
 	public Employee() {
 		
 	}
 
-	public Employee(Person person, String role, Date startDate, long hourlyRate) {
+	public Employee(Person person, String role, Date startDate, double hourlyRate) {
 		super();
 		this.person = person;
 		this.role = role;
@@ -67,13 +67,22 @@ public class Employee{
 	}
 
 
-	public long getHourlyRate() {
+	public double getHourlyRate() {
 		return hourlyRate;
 	}
 
 
-	public void setHourlyRate(long hourlyRate) {
+	public void setHourlyRate(double hourlyRate) {
 		this.hourlyRate = hourlyRate;
 	}
+
+	public String getSsn() {
+		return ssn;
+	}
+
+	public void setSsn(String ssn) {
+		this.ssn = ssn;
+	}
+	
 	
 }

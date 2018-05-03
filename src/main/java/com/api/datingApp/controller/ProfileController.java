@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specifications;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,13 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.api.datingApp.ProfileSpecification;
 import com.api.datingApp.model.Person;
 import com.api.datingApp.model.Profile;
+import com.api.datingApp.model.SearchCriteria;
 import com.api.datingApp.model.ServerResponse;
 import com.api.datingApp.model.User;
 import com.api.datingApp.repo.PersonRepo;
 import com.api.datingApp.repo.ProfileRepo;
-import com.api.datingApp.secruity.PasswordAuthentication;
 
 @RestController
 @RequestMapping(value="/profiles")
@@ -62,28 +64,19 @@ public class ProfileController {
 		if(personRepo.findBySsn(ssn).isEmpty()) {
 			return new ServerResponse<Profile>(211, "User With SSN Does Not Exsist.");
 		}else {
-			
-			List<Person> person = personRepo.findBySsn(ssn);
-			String profileId = person.get(0).getFirstName();
-			String profileName = profile.getProfileName();
-			for(int i = 0; i < 20 - profileId.length(); i++) {
-				if(i % 2 == 0) {
-					int index = i % profileName.length();
-					if(profileName.charAt(index) != ' ') {
-						profileId += profileName.charAt(index);
-					}
-				}else {
-					char rand = (char) (Math.random() % 99);
-					profileId += rand;
-				}
-			}
-			profile.setProfileId(profileId);
 			Date date = new Date(Calendar.getInstance().getTime().getTime());
 			profile.setCreationDate(date);
 			profile.setLastModDate(date);
 			profileRepo.save(profile);
 			return new ServerResponse<Profile>(200, "OK");
 		}
+	}
+	
+	@PostMapping(value="/delete")
+	@ResponseBody
+	public ServerResponse<Profile> deleteProfile(@RequestBody Profile profile) {
+		profileRepo.delete(profile);
+		return new ServerResponse<Profile>(200, "OK");
 	}
 	
 	@PostMapping(value="/save/{ssn}")
@@ -99,6 +92,74 @@ public class ProfileController {
 			profileRepo.save(profile);
 			return new ServerResponse<Profile>(200, "OK");
 		}
+	}
+	
+	@PostMapping(value="/find")
+	@ResponseBody
+	public ServerResponse<Profile> findProfiles(@RequestBody Profile profile) {
+		String ageStart = (profile.getDatingAgeRangeStart() - 1) + "";
+		String ageEnd = (profile.getDatingAgeRangeEnd() + 1) + "";
+		String ssn = profile.getUser().getSsn();
+		ProfileSpecification ageStartSpec = new ProfileSpecification(new SearchCriteria("age", ">", ageStart));
+		ProfileSpecification ageEndSpec = new ProfileSpecification(new SearchCriteria("age", "<", ageEnd));
+		ProfileSpecification userSpec = new ProfileSpecification(new SearchCriteria("user", "!=", profile.getUser()));
+		ProfileSpecification citySpec = null;
+		ProfileSpecification stateSpec = null;
+		ProfileSpecification streetSpec = null;
+		ProfileSpecification zipcodeSpec = null;
+		ProfileSpecification genderSpec = null;
+		ProfileSpecification weightSpec = null;
+		ProfileSpecification heightSpec = null;
+		ProfileSpecification hairColorSpec = null;
+		ProfileSpecification hobbiesSpec = null;
+		ProfileSpecification mSpec = null;
+		ProfileSpecification fSpec = null;
+		if(profile.getM_f() != "") {
+			genderSpec =  new ProfileSpecification(new SearchCriteria("m_f", "=", profile.getM_f()));
+		}else {
+			mSpec =  new ProfileSpecification(new SearchCriteria("m_f", "=", "m"));
+			fSpec = new ProfileSpecification(new SearchCriteria("m_f", "=", "f"));
+		}
+		if(profile.getWeight() != 0.0) {
+			weightSpec =  new ProfileSpecification(new SearchCriteria("weight", ":", profile.getWeight()));
+		}
+		if(profile.getHeight() != 0.0) {
+			heightSpec =  new ProfileSpecification(new SearchCriteria("height", ":", profile.getHeight()));
+		}
+		if(profile.getHairColor() != "") {
+			hairColorSpec =  new ProfileSpecification(new SearchCriteria("hairColor", ":", profile.getHairColor()));
+		}
+		if(profile.getHobbies() != "") {
+			hobbiesSpec = new ProfileSpecification(new SearchCriteria("hobbies", ":", profile.getHobbies()));
+		}
+		if(profile.getUser().getPerson().getCity() != "") {
+			citySpec = new ProfileSpecification(new SearchCriteria("user", "city", profile.getUser().getPerson().getCity()));
+		}
+		if(profile.getUser().getPerson().getState() != "") {
+			stateSpec = new ProfileSpecification(new SearchCriteria("user", "state", profile.getUser().getPerson().getState()));
+		}
+		if(profile.getUser().getPerson().getStreet() != "") {
+			streetSpec = new ProfileSpecification(new SearchCriteria("user", "street", profile.getUser().getPerson().getStreet()));
+		}
+		if(profile.getUser().getPerson().getZipcode() != 0) {
+			zipcodeSpec = new ProfileSpecification(new SearchCriteria("user", "zipcode", profile.getUser().getPerson().getZipcode()));
+		}
+		
+		List<Profile> profiles = profileRepo.findAll(Specifications.where(ageStartSpec)
+				.and(userSpec).and(ageEndSpec).and(genderSpec).
+				and(weightSpec).and(heightSpec).and(hairColorSpec)
+				.and(hobbiesSpec).and(citySpec).and(stateSpec)
+				.and(streetSpec).and(zipcodeSpec).or(fSpec).or(mSpec));
+		if(profiles.isEmpty()) {
+			return new ServerResponse<Profile>(500, "Interna Server Error");
+		}else {
+			return new ServerResponse<Profile>(200, "OK", profiles);
+		}
+		
+		
+		
+		
+		
 	}
 	
 }

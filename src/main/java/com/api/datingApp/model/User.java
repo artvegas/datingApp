@@ -1,7 +1,8 @@
 package com.api.datingApp.model;
 
-import java.sql.Date;
+import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -13,7 +14,7 @@ public class User{
 	@Id
 	@Column(name = "SSN")
 	private String ssn;
-	@OneToOne
+	@OneToOne(cascade = {CascadeType.ALL})
 	@PrimaryKeyJoinColumn(name="SSN", referencedColumnName="SSN")
 	private Person person;
 	@Column(name = "PPP")
@@ -84,6 +85,14 @@ public class User{
 	public String toString() {
 		return "User [ssn=" + ssn + ", person=" + person + ", PPP=" + PPP + ", rating=" + rating + ", dateOfLastAct="
 				+ dateOfLastAct + "]";
+	}
+	
+	public String getRatingPercentage() {
+		double ratingPercentage = (double)((double)this.rating / 10.0 ) * 100;
+		if(ratingPercentage < 0) {
+			return "0%";
+		}
+		return ratingPercentage + "%";
 	}
 	
 	

@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.api.datingApp.model.Account;
+import com.api.datingApp.model.Profile;
 import com.api.datingApp.model.ServerResponse;
 import com.api.datingApp.model.User;
 import com.api.datingApp.repo.AccountRepo;
+import com.api.datingApp.repo.PersonRepo;
 
 @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 @RestController
@@ -26,7 +28,8 @@ public class AccountController {
 	
 	@Autowired
 	AccountRepo accountRepo;
-
+	@Autowired
+	PersonRepo personRepo;
 	
 	@GetMapping(value="/all")
 	@ResponseBody
@@ -70,4 +73,26 @@ public class AccountController {
 		return new ServerResponse<Account>(200, "OK");
 	}
 
+
+
+	@PostMapping(value="/delete")
+	@ResponseBody
+	public ServerResponse<Account> delete(@RequestBody Account account) {
+		accountRepo.delete(account);
+		return new ServerResponse<Account>(200, "OK");
+	}
+	
+	@PostMapping(value="/save")
+	@ResponseBody
+	public ServerResponse<Account> save(@RequestBody Account account) {
+		
+		if(personRepo.findBySsn(account.getUser().getSsn()).isEmpty()) {
+			return new ServerResponse<Account>(211, "User With SSN Does Not Exsist.");
+		}else {
+			accountRepo.delete(account);
+			accountRepo.save(account);
+			return new ServerResponse<Account>(200, "OK");
+		}
+	}
+	
 }
