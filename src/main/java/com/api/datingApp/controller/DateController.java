@@ -62,9 +62,9 @@ public class DateController {
 			today.setHours(0);
 			today.setMinutes(0);
 			today.setSeconds(0);
-			today.setDate(today.getDate() - 1);
+			today.setDate(today.getDate() + 1);
 			DatingSpecification endDateSpec = new DatingSpecification(
-					new SearchCriteria("dateKey","date<", today));
+					new SearchCriteria("dateKey","date>", today));
 			DatingSpecification statusSpec = new DatingSpecification(
 					new SearchCriteria("status","=", 1));
 			DatingSpecification statusSpec2 = new DatingSpecification(
@@ -176,9 +176,9 @@ public class DateController {
 	@ResponseBody
 	public ServerResponse<Dates> acceptDateRequest(@RequestBody Dates date){
 		date.setStatus(0);
-//		List<Employee> employees = employeeRepo.findByRole("CustRep");
-//		int randomEmployee = (int)(Math.random() * 1000) % employees.size();
-//		date.setEmployee(employees.get(randomEmployee));
+		List<Employee> employees = employeeRepo.findByRole("CustRep");
+		int randomEmployee = (int)(Math.random() * 1000) % employees.size();
+		date.setEmployee(employees.get(randomEmployee));
 		dateRepo.save(date);
 		return new ServerResponse<Dates>(200, "OK");
 	}
